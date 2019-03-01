@@ -18,6 +18,8 @@ from spreadsheet import add_rows_to_sleep_tab
 # 4) proper formatting in sheet
 # 5) delete this env and recreate an isolated env, install and document dependencies - pyenv!
 # 6) automate fully via heroku? First just create a job to run once a day, every morning and see if it works.
+# 7) Refactor - create proper classes and a main file that could be run from command line
+# which takes start and end date  and cookie as input
 # Later, take care about authentication (Garming connect website cookie expiring).
 
 def download(start_date, end_date):
