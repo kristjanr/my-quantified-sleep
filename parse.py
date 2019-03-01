@@ -14,8 +14,11 @@ from spreadsheet import add_rows_to_sleep_tab
 # 1) check if the awake time is received via request - done and added
 # 2) check if an api exists. somehow, tapiriik is doing it! - sent an email to get access
 # 3) data to google spreadsheet - done
+# TODO:
 # 4) proper formatting in sheet
-# 5) automate fully via heroku. First just create a job to run once a day, every morning and see if it works. Later worry about authentication etc.
+# 5) delete this env and recreate an isolated env, install and document dependencies - pyenv!
+# 6) automate fully via heroku? First just create a job to run once a day, every morning and see if it works.
+# Later, take care about authentication (Garming connect website cookie expiring).
 
 def download(start_date, end_date):
     headers = {
