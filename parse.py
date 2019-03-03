@@ -10,14 +10,14 @@ from secrets import garmin_connect_request_headers
 from spreadsheet import add_rows_to_sleep_tab
 
 
-# plan:
+# DONE:
 # 1) check if the awake time is received via request - done and added
 # 2) check if an api exists. somehow, tapiriik is doing it! - sent an email to get access
 # 3) data to google spreadsheet - done
-# TODO:
 # 4) proper formatting in sheet
+# TODO:
 # 5) delete this env and recreate an isolated env, install and document dependencies - pyenv!
-# 6) automate fully via heroku? First just create a job to run once a day, every morning and see if it works.
+# 6) automate via Heroku? First just create a job to run once a day, every morning and see if it works.
 # 7) Refactor - create proper classes and a main file that could be run from command line
 # which takes start and end date  and cookie as input
 # Later, take care about authentication (Garming connect website cookie expiring).
@@ -84,6 +84,7 @@ def converter(data):
         awake_duration = datetime.timedelta(seconds=d['awakeSleepSeconds'])
         night = Night(bed_time, wake_time, wakeup_date, deep_duration, light_duration, total_duration, awake_duration)
         nights.append(night)
+        print(night)
     return nights
 
 
@@ -93,18 +94,24 @@ def send_to_google(start_date, end_date):
     for n in converter(data):
         rows.append(
             [
-                str(n.wake_date),
-                str(n.bed_time),
-                str(n.wake_time),
-                str(n.deep_duration),
-                str(n.light_duration),
-                str(n.awake_duration),
-                str(n.total_duration)
+                n.wake_date.strftime('%Y-%b-%d %a'),
+                n.bed_time.strftime('%H:%M %a'),
+                n.wake_time.strftime('%H:%M %a'),
+                duration_to_string(n.deep_duration),
+                duration_to_string(n.light_duration),
+                duration_to_string(n.awake_duration),
+                duration_to_string(n.total_duration),
             ])
     print(rows)
     add_rows_to_sleep_tab(rows)
 
 
-start_date = '2019-02-07'
-end_date = '2019-03-01'
+def duration_to_string(duration):
+    hours, remainder = divmod(duration.total_seconds(), 3600)
+    minutes, _ = divmod(remainder, 60)
+    return '{:02}:{:02}'.format(int(hours), int(minutes))
+
+
+start_date = '2019-03-01'
+end_date = '2019-03-03'
 send_to_google(start_date, end_date)

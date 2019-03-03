@@ -15,8 +15,8 @@ class Night:
                  total_duration: datetime.timedelta,
                  awake_duration: datetime.timedelta,
                  ):
-        self.bed_time = bed_time
-        self.wake_time = wake_time
+        self.bed_time = bed_time.astimezone(tallinn)
+        self.wake_time = wake_time.astimezone(tallinn)
         self.wake_date = wake_date
         self.deep_duration = deep_duration
         self.light_duration = light_duration
@@ -24,9 +24,9 @@ class Night:
         self.awake_duration = awake_duration
 
     def __str__(self):
-        return self.bed_time.astimezone(tallinn).strftime('%H:%M %a, %d-%b-%Y') \
+        return self.bed_time.strftime('%H:%M %a, %d-%b-%Y') \
                + ' - ' \
-               + self.wake_time.astimezone(tallinn).strftime('%H:%M %a, %d-%b-%Y')
+               + self.wake_time.strftime('%H:%M %a, %d-%b-%Y')
 
     def __repr__(self):
         return self.wake_date.isoformat()
