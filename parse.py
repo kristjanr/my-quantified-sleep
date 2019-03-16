@@ -77,12 +77,12 @@ def converter(data):
     for d in data:
         bed_time = datetime.datetime.fromtimestamp(d['sleepStartTimestampGMT'] / 1000, pytz.utc)
         wake_time = datetime.datetime.fromtimestamp(d['sleepEndTimestampGMT'] / 1000, pytz.utc)
-        wakeup_date = datetime.date(*[int(datepart) for datepart in d['calendarDate'].split('-')])
+        previous_day = datetime.date(*[int(datepart) for datepart in d['calendarDate'].split('-')]) - datetime.timedelta(days=1)
         deep_duration = datetime.timedelta(seconds=d['deepSleepSeconds'])
         light_duration = datetime.timedelta(seconds=d['lightSleepSeconds'])
         total_duration = datetime.timedelta(seconds=d['sleepTimeSeconds'])
         awake_duration = datetime.timedelta(seconds=d['awakeSleepSeconds'])
-        night = Night(bed_time, wake_time, wakeup_date, deep_duration, light_duration, total_duration, awake_duration)
+        night = Night(bed_time, wake_time, previous_day, deep_duration, light_duration, total_duration, awake_duration)
         nights.append(night)
         print(night)
     return nights
@@ -94,9 +94,11 @@ def send_to_google(start_date, end_date):
     for n in converter(data):
         rows.append(
             [
-                n.wake_date.strftime('%Y-%b-%d %a'),
-                n.bed_time.strftime('%H:%M %a'),
-                n.wake_time.strftime('%H:%M %a'),
+                n.previous_day.strftime('%Y-%m-%d %a'),
+                n.bed_time.strftime('%H:%M'),
+                n.bed_time.strftime('%a'),
+                n.wake_time.strftime('%H:%M'),
+                n.wake_time.strftime('%a'),
                 duration_to_string(n.deep_duration),
                 duration_to_string(n.light_duration),
                 duration_to_string(n.awake_duration),
@@ -112,6 +114,6 @@ def duration_to_string(duration):
     return '{:02}:{:02}'.format(int(hours), int(minutes))
 
 
-start_date = '2019-03-01'
-end_date = '2019-03-03'
+start_date = '2019-03-13'
+end_date = '2019-03-16'
 send_to_google(start_date, end_date)
